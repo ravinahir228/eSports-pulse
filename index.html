@@ -1,0 +1,745 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080a10">
+<meta name="description" content="eSports Pulse: esports news, tournaments, player profiles, scores and rankings.">
+<title>eSports Pulse | Enter the Arena</title>
+
+<style>
+:root {
+  --bg:#080a10;
+  --panel:#111621;
+  --red:#ff3158;
+  --cyan:#4ce7f2;
+  --text:#f5f7ff;
+  --muted:#9ba6bb;
+  --line:#273044;
+}
+* {box-sizing:border-box;margin:0;padding:0}
+html {scroll-behavior:smooth;scroll-padding-top:100px}
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+a {color:inherit;text-decoration:none}
+button,input {font:inherit}
+button {cursor:pointer}
+.container {width:min(1160px,92%);margin:auto}
+.hidden {display:none!important}
+
+/* INTRO ANIMATION */
+#intro {
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:
+    radial-gradient(circle at center,#301020 0%,#10101b 45%,#030409 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  transition:opacity .8s,visibility .8s;
+}
+#intro.hide {opacity:0;visibility:hidden;pointer-events:none}
+.intro-grid {
+  position:absolute;
+  inset:-50%;
+  background-image:
+    linear-gradient(#4ce7f218 1px,transparent 1px),
+    linear-gradient(90deg,#4ce7f218 1px,transparent 1px);
+  background-size:45px 45px;
+  transform:perspective(400px) rotateX(55deg);
+  animation:gridmove 12s linear infinite;
+}
+.intro-content {
+  position:relative;
+  text-align:center;
+  padding:20px;
+  animation:introRise 1s ease-out;
+}
+.intro-logo {
+  width:105px;height:105px;
+  margin:0 auto 25px;
+  border:2px solid var(--red);
+  border-radius:25px;
+  display:grid;
+  place-items:center;
+  font-size:45px;
+  font-weight:1000;
+  font-style:italic;
+  box-shadow:0 0 35px #ff31585c,inset 0 0 25px #ff31582a;
+  transform:rotate(-8deg);
+  animation:glow 2s infinite alternate;
+}
+.intro-content h1 {
+  font-size:clamp(35px,8vw,75px);
+  line-height:1.1;
+  letter-spacing:-3px;
+  text-transform:uppercase;
+}
+.red {color:var(--red)}
+.intro-content p {
+  color:var(--cyan);
+  letter-spacing:4px;
+  font-size:12px;
+  margin:20px 0 28px;
+}
+.loading {
+  width:min(300px,70vw);
+  height:3px;
+  margin:auto;
+  background:#333;
+}
+.loading span {
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,var(--red),var(--cyan));
+  animation:loadbar 10s linear forwards;
+}
+#skip {
+  position:absolute;
+  right:20px;
+  bottom:22px;
+  background:#111621;
+  border:1px solid #ffffff55;
+  border-radius:30px;
+  padding:10px 18px;
+  color:white;
+}
+#skip:hover {border-color:var(--cyan);color:var(--cyan)}
+@keyframes loadbar {to{width:100%}}
+@keyframes glow {to{box-shadow:0 0 50px #ff3158a0}}
+@keyframes introRise {from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:none}}
+@keyframes gridmove {to{background-position:0 45px,45px 0}}
+
+/* HEADER */
+header {
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#080a10ed;
+  backdrop-filter:blur(15px);
+  border-bottom:1px solid var(--line);
+}
+.topbar {
+  min-height:75px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+.brand {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  font-size:21px;
+  letter-spacing:-1px;
+}
+.brand-icon {
+  width:40px;height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:var(--red);
+  font-size:19px;
+  font-style:italic;
+}
+.menu-btn,.search-btn {
+  padding:10px 14px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--panel);
+  color:white;
+}
+.menu-btn:hover,.search-btn:hover {border-color:var(--cyan)}
+.menu {
+  position:absolute;
+  right:4%;
+  top:67px;
+  width:220px;
+  padding:10px;
+  background:#111621;
+  border:1px solid var(--line);
+  border-radius:13px;
+  box-shadow:0 15px 40px #000b;
+}
+.menu a {
+  display:block;
+  padding:11px;
+  border-radius:8px;
+}
+.menu a:hover {background:#ffffff0c;color:var(--cyan)}
+.search-row {display:flex;gap:9px;padding-bottom:14px}
+.search-box {
+  flex:1;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:12px;
+  padding:0 13px;
+}
+.search-box input {
+  width:100%;
+  min-width:0;
+  padding:13px 0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:white;
+}
+.search-box input::placeholder {color:#8791a6}
+.ai-tag {
+  font-size:10px;
+  color:var(--cyan);
+  border:1px solid #4ce7f255;
+  padding:4px 7px;
+  border-radius:5px;
+  white-space:nowrap;
+}
+
+/* HERO */
+.hero {
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  align-items:center;
+  gap:30px;
+  padding:65px 0 45px;
+}
+.eyebrow {
+  color:var(--cyan);
+  font-size:11px;
+  font-weight:bold;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+.hero h2 {
+  font-size:clamp(43px,6vw,75px);
+  line-height:.99;
+  letter-spacing:-4px;
+  margin:20px 0;
+}
+.hero p {color:var(--muted);max-width:510px}
+.buttons {display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}
+.btn {
+  display:inline-block;
+  padding:12px 17px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--panel);
+  color:white;
+  font-weight:bold;
+}
+.btn.primary {background:var(--red);border-color:var(--red)}
+.btn:hover {transform:translateY(-2px)}
+.hero-art {
+  min-height:320px;
+  display:grid;
+  place-items:center;
+  border:1px solid #ff31584d;
+  border-radius:24px;
+  position:relative;
+  overflow:hidden;
+  background:radial-gradient(circle,#39152b,#101522 60%,#080a10);
+}
+.ring {
+  width:200px;height:200px;
+  border:1px solid var(--cyan);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  box-shadow:0 0 40px #4ce7f225,inset 0 0 40px #ff315822;
+  position:relative;
+}
+.ring:before {
+  content:"";
+  position:absolute;
+  inset:15px;
+  border:1px dashed var(--red);
+  border-radius:50%;
+  animation:spin 15s linear infinite;
+}
+.glyph {
+  font-size:90px;
+  font-weight:1000;
+  font-style:italic;
+  text-shadow:5px 4px var(--red);
+}
+.art-label {
+  position:absolute;
+  top:18px;left:18px;
+  color:var(--cyan);
+  font-size:10px;
+  letter-spacing:2px;
+}
+.art-bottom {
+  position:absolute;
+  bottom:18px;right:18px;
+  color:var(--red);
+  font-size:10px;
+  letter-spacing:2px;
+}
+@keyframes spin {to{transform:rotate(360deg)}}
+
+/* SECTIONS */
+.section {padding:35px 0}
+.section-heading {margin-bottom:20px}
+.section-heading small {color:var(--red);letter-spacing:2px;font-weight:bold}
+.section-heading h2 {font-size:29px;letter-spacing:-1px}
+.section-heading p {color:var(--muted);font-size:13px}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  padding:10px 0 35px;
+}
+.stat,.card,.event,.table-box {
+  border:1px solid var(--line);
+  background:linear-gradient(145deg,#121824,#0c0f17);
+  border-radius:15px;
+}
+.stat {padding:18px}
+.stat strong {display:block;font-size:24px}
+.stat span {color:var(--muted);font-size:11px;text-transform:uppercase}
+.cards {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+.card {overflow:hidden;transition:.2s}
+.card:hover {transform:translateY(-3px);border-color:#ff315866}
+.card-art {
+  height:135px;
+  display:grid;
+  place-items:center;
+  font-size:52px;
+  background:radial-gradient(circle at 70% 20%,#ff315833,transparent 50%),#141c2b;
+  border-bottom:1px solid var(--line);
+}
+.card-body {padding:17px}
+.tag {
+  color:var(--cyan);
+  font-size:10px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.card h3 {font-size:17px;line-height:1.35;margin:9px 0}
+.card p {font-size:13px;color:var(--muted);margin-bottom:12px}
+.card-link {color:var(--cyan);font-size:12px;font-weight:bold}
+.event-list {display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.event {display:flex;gap:15px;padding:17px}
+.date {
+  min-width:58px;height:62px;
+  display:grid;place-items:center;
+  align-content:center;
+  border-radius:10px;
+  background:#ff315818;
+  border:1px solid #ff315855;
+}
+.date strong {font-size:19px}
+.date span {font-size:9px;color:#ff9bad}
+.event p {color:var(--muted);font-size:12px}
+.event h3 {font-size:15px}
+.note {font-size:12px;color:var(--muted);margin-bottom:12px}
+.table-box {overflow-x:auto}
+table {width:100%;border-collapse:collapse;min-width:480px}
+th,td {padding:14px;text-align:left;border-bottom:1px solid #ffffff12}
+th {color:var(--muted);font-size:10px;letter-spacing:1px}
+td {font-size:13px}
+tr:last-child td {border-bottom:0}
+.filters {display:flex;gap:8px;flex-wrap:wrap;margin-bottom:17px}
+.filter {
+  padding:8px 13px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:25px;
+  color:var(--muted);
+}
+.filter.active {border-color:var(--red);color:white;background:#ff31581a}
+.player {display:flex;align-items:center;gap:12px}
+.avatar {
+  width:43px;height:43px;
+  display:grid;place-items:center;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--red),#43205b);
+  font-weight:bold;
+}
+.player p {margin:3px 0 0}
+footer {margin-top:40px;border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:12px}
+.footer-row {display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+#searchMessage {color:var(--cyan);font-size:12px;margin-top:10px}
+@media(max-width:800px) {
+  .hero {grid-template-columns:1fr;padding-top:42px}
+  .hero-art {min-height:250px}
+  .cards {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats {grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:520px) {
+  .brand {font-size:17px}
+  .brand-icon {width:35px;height:35px}
+  .hero h2 {font-size:49px;letter-spacing:-2px}
+  .cards,.event-list {grid-template-columns:1fr}
+  .ai-tag {display:none}
+  .ring {width:160px;height:160px}
+  .glyph {font-size:70px}
+  .section-heading h2 {font-size:25px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO: 10 SECONDS -->
+<div id="intro">
+  <div class="intro-grid"></div>
+  <div class="intro-content">
+    <div class="intro-logo">EP</div>
+    <h1>eSports <span class="red">Pulse</span></h1>
+    <p>WELCOME TO THE ESPORTS WORLD</p>
+    <div class="loading"><span></span></div>
+    <p style="font-size:10px;letter-spacing:3px">NEWS • GAMES • CHAMPIONS</p>
+  </div>
+  <button id="skip" type="button">SKIP INTRO ↗</button>
+</div>
+
+<header>
+  <div class="container">
+    <div class="topbar">
+      <a href="#home" class="brand">
+        <span class="brand-icon">EP</span>
+        <span>eSports <span class="red">Pulse</span></span>
+      </a>
+      <button id="menuButton" class="menu-btn" aria-expanded="false">
+        ☰ MENU
+      </button>
+    </div>
+
+    <nav id="menu" class="menu hidden">
+      <a href="#news">Latest News</a>
+      <a href="#events">Tournaments & Events</a>
+      <a href="#scores">Scoreboard</a>
+      <a href="#games">Games</a>
+      <a href="#players">Player Profiles</a>
+    </nav>
+
+    <div class="search-row">
+      <label class="search-box">
+        <span style="color:var(--cyan)">⌕</span>
+        <input id="searchInput" type="search"
+          placeholder="Search games, players, teams and news...">
+        <span class="ai-tag">PULSE SEARCH</span>
+      </label>
+      <button id="searchButton" class="search-btn">↵</button>
+    </div>
+    <div id="searchMessage"></div>
+  </div>
+</header>
+
+<main id="home" class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">● THE PULSE OF ESPORTS</div>
+      <h2>ENTER THE<br><span class="red">ARENA.</span><br>STAY AHEAD.</h2>
+      <p>
+        Your ultimate hub for esports news, tournament updates,
+        competitive gaming, player profiles and team rankings.
+      </p>
+      <div class="buttons">
+        <a href="#news" class="btn primary">Explore News ↗</a>
+        <a href="#events" class="btn">Upcoming Events</a>
+      </div>
+    </div>
+    <div class="hero-art">
+      <span class="art-label">COMPETE WITHOUT LIMITS</span>
+      <div class="ring"><div class="glyph">EP</div></div>
+      <span class="art-bottom">#PULSEOFESPORTS</span>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><strong>24/7</strong><span>Esports Coverage</span></div>
+    <div class="stat"><strong>Mobile</strong><span>Gaming Arena</span></div>
+    <div class="stat"><strong>PC</strong><span>Competitive Gaming</span></div>
+    <div class="stat"><strong>Global</strong><span>Esports Community</span></div>
+  </div>
+
+  <!-- NEWS -->
+  <section class="section" id="news">
+    <div class="section-heading">
+      <small>THE LATEST UPDATES</small>
+      <h2>Latest <span class="red">News</span></h2>
+      <p>Esports stories, competitive updates and gaming insights.</p>
+    </div>
+    <div class="cards searchable">
+      <article class="card search-item" data-search="bgmi mobile esports news tournament">
+        <div class="card-art">🎯</div>
+        <div class="card-body">
+          <span class="tag">Mobile Esports</span>
+          <h3>BGMI Competitive Scene</h3>
+          <p>Add original BGMI news, verified match reports and roster updates here.</p>
+          <a href="#games" class="card-link">Explore BGMI ↗</a>
+        </div>
+      </article>
+      <article class="card search-item" data-search="valorant pc esports teams">
+        <div class="card-art">⚡</div>
+        <div class="card-body">
+          <span class="tag">PC Gaming</span>
+          <h3>Competitive PC Gaming</h3>
+          <p>Cover professional teams, competitive matches and major announcements.</p>
+          <a href="#games" class="card-link">Explore Games ↗</a>
+        </div>
+      </article>
+      <article class="card search-item" data-search="esports player roster transfer profile">
+        <div class="card-art">🏆</div>
+        <div class="card-body">
+          <span class="tag">Player Watch</span>
+          <h3>Players to Watch</h3>
+          <p>Publish player profiles, verified achievements and team transfers.</p>
+          <a href="#players" class="card-link">View Profiles ↗</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- TOURNAMENTS -->
+  <section class="section" id="events">
+    <div class="section-heading">
+      <small>MARK YOUR CALENDAR</small>
+      <h2>Tournaments <span class="red">& Events</span></h2>
+      <p>Update these cards with official schedules and tournament links.</p>
+    </div>
+    <div class="event-list searchable">
+      <article class="event search-item" data-search="bgmi mobile tournament schedule">
+        <div class="date"><strong>--</strong><span>DATE</span></div>
+        <div>
+          <h3>BGMI Tournament Tracker</h3>
+          <p>Official date, participating teams and broadcast details.</p>
+          <span class="tag">Schedule to be added</span>
+        </div>
+      </article>
+      <article class="event search-item" data-search="pc valorant esports championship">
+        <div class="date"><strong>--</strong><span>DATE</span></div>
+        <div>
+          <h3>PC Esports Championship</h3>
+          <p>Qualifiers, playoffs, teams and official match results.</p>
+          <span class="tag">Schedule to be added</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- SCOREBOARD -->
+  <section class="section" id="scores">
+    <div class="section-heading">
+      <small>COMPETITIVE STANDINGS</small>
+      <h2>Scoreboard & <span class="red">Points Table</span></h2>
+      <p class="note">Demo entries below. Replace them with verified match data.</p>
+    </div>
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr><th>Rank</th><th>Team</th><th>Matches</th><th>Points</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>01</td><td>🔺 Team Alpha</td><td>—</td><td>—</td><td>TBD</td></tr>
+          <tr><td>02</td><td>⚡ Team Nova</td><td>—</td><td>—</td><td>TBD</td></tr>
+          <tr><td>03</td><td>🐺 Team Vortex</td><td>—</td><td>—</td><td>TBD</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- GAMES -->
+  <section class="section" id="games">
+    <div class="section-heading">
+      <small>CHOOSE YOUR BATTLEFIELD</small>
+      <h2>Explore <span class="red">Games</span></h2>
+      <p>Mobile and PC games in one esports destination.</p>
+    </div>
+
+    <div class="filters">
+      <button class="filter active" data-filter="all">All Games</button>
+      <button class="filter" data-filter="mobile">Mobile</button>
+      <button class="filter" data-filter="pc">PC</button>
+    </div>
+
+    <div class="cards" id="gameCards">
+      <article class="card game-card search-item" data-type="mobile" data-search="bgmi battlegrounds mobile india">
+        <div class="card-art">🎯</div>
+        <div class="card-body"><span class="tag">Mobile</span><h3>BGMI</h3><p>News, teams, player profiles and tournaments.</p></div>
+      </article>
+      <article class="card game-card search-item" data-type="mobile" data-search="pubg mobile battle royale">
+        <div class="card-art">🪖</div>
+        <div class="card-body"><span class="tag">Mobile</span><h3>PUBG Mobile</h3><p>International competition and esports coverage.</p></div>
+      </article>
+      <article class="card game-card search-item" data-type="mobile" data-search="free fire mobile">
+        <div class="card-art">🔥</div>
+        <div class="card-body"><span class="tag">Mobile</span><h3>Free Fire</h3><p>Teams, events and competitive updates.</p></div>
+      </article>
+      <article class="card game-card search-item" data-type="pc" data-search="valorant pc tactical shooter">
+        <div class="card-art">⚡</div>
+        <div class="card-body"><span class="tag">PC</span><h3>VALORANT</h3><p>Professional teams, leagues and match coverage.</p></div>
+      </article>
+      <article class="card game-card search-item" data-type="pc" data-search="counter strike 2 cs2 fps">
+        <div class="card-art">✦</div>
+        <div class="card-body"><span class="tag">PC</span><h3>Counter-Strike 2</h3><p>Competitive FPS news and team standings.</p></div>
+      </article>
+      <article class="card game-card search-item" data-type="pc" data-search="league of legends lol moba">
+        <div class="card-art">🐉</div>
+        <div class="card-body"><span class="tag">PC</span><h3>League of Legends</h3><p>League updates, roster news and results.</p></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- PLAYER PROFILES -->
+  <section class="section" id="players">
+    <div class="section-heading">
+      <small>MEET THE COMPETITORS</small>
+      <h2>Player <span class="red">Profiles</span></h2>
+      <p>Add real player names, teams, game roles and verified statistics.</p>
+    </div>
+    <div class="cards searchable">
+      <article class="card search-item" data-search="player profile mobile esports">
+        <div class="card-body player">
+          <div class="avatar">P1</div>
+          <div><h3>Player Profile 01</h3><p>Game · Team · Role</p></div>
+        </div>
+      </article>
+      <article class="card search-item" data-search="player profile pc esports">
+        <div class="card-body player">
+          <div class="avatar">P2</div>
+          <div><h3>Player Profile 02</h3><p>Game · Team · Role</p></div>
+        </div>
+      </article>
+      <article class="card search-item" data-search="player profile gaming">
+        <div class="card-body player">
+          <div class="avatar">P3</div>
+          <div><h3>Player Profile 03</h3><p>Game · Team · Role</p></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container footer-row">
+    <div><strong>eSports <span class="red">Pulse</span></strong><br>The pulse of competitive gaming.</div>
+    <div>Independent esports coverage. Verify all news and results.</div>
+    <div>© <span id="year"></span> eSports Pulse</div>
+  </div>
+</footer>
+
+<script>
+/* INTRO: SKIP OR AUTOMATICALLY FINISH AFTER 10 SECONDS */
+(function () {
+  const intro = document.getElementById("intro");
+  let finished = false;
+
+  function finishIntro() {
+    if (finished) return;
+    finished = true;
+    intro.classList.add("hide");
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setTimeout(() => intro.remove(), 900);
+  }
+
+  document.getElementById("skip").addEventListener("click", finishIntro);
+
+  // Optional welcome voice. Device/browser voices may vary.
+  if ("speechSynthesis" in window) {
+    setTimeout(() => {
+      if (finished) return;
+      const speech = new SpeechSynthesisUtterance(
+        "Welcome to the Esports World. This is Esports Pulse."
+      );
+      speech.lang = "en-US";
+      speech.rate = 0.88;
+      speech.pitch = 0.85;
+      window.speechSynthesis.speak(speech);
+    }, 500);
+  }
+
+  setTimeout(finishIntro, 10000);
+})();
+
+/* MENU */
+const menuButton = document.getElementById("menuButton");
+const menu = document.getElementById("menu");
+
+menuButton.addEventListener("click", () => {
+  const isOpening = menu.classList.contains("hidden");
+  menu.classList.toggle("hidden", !isOpening);
+  menuButton.setAttribute("aria-expanded", String(isOpening));
+});
+
+menu.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => {
+    menu.classList.add("hidden");
+    menuButton.setAttribute("aria-expanded", "false");
+  });
+});
+
+/* SEARCH: FILTERS CONTENT ALREADY ON THIS PAGE */
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
+const searchMessage = document.getElementById("searchMessage");
+
+function searchContent() {
+  const query = searchInput.value.trim().toLowerCase();
+  let count = 0;
+
+  document.querySelectorAll(".search-item").forEach(item => {
+    const text = (
+      (item.dataset.search || "") + " " + item.innerText
+    ).toLowerCase();
+
+    const matches = !query || text.includes(query);
+    item.classList.toggle("hidden", !matches);
+    if (matches) count++;
+  });
+
+  searchMessage.textContent = query
+    ? count + " matching items found."
+    : "";
+}
+
+searchInput.addEventListener("input", searchContent);
+searchButton.addEventListener("click", searchContent);
+searchInput.addEventListener("keydown", event => {
+  if (event.key === "Enter") searchContent();
+});
+
+/* MOBILE / PC GAME FILTER */
+document.querySelectorAll("[data-filter]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-filter]").forEach(filterButton => {
+      filterButton.classList.toggle("active", filterButton === button);
+    });
+
+    const selected = button.dataset.filter;
+
+    document.querySelectorAll(".game-card").forEach(card => {
+      const matches = selected === "all" || card.dataset.type === selected;
+      card.classList.toggle("hidden", !matches);
+    });
+  });
+});
+
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
+          
